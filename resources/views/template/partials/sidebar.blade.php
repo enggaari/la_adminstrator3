@@ -16,7 +16,7 @@
                         }
                     @endphp
 
-                    <a class="nav-link @if ($title == 'Dashboard') active @endif" href="{{ $link }}">
+                    <a class="nav-link @if ($title == 'Dashboard') active @endif" href="{{ url("$link") }}">
                         <div class="d-flex align-items-center"><span class="nav-link-icon"><span
                                     data-feather="cast"></span></span><span class="nav-link-text">Dashbboard</span>
                         </div>
@@ -40,28 +40,28 @@
                         @if ($title == 'Role Access' || $title == 'Menu' || $title == 'Sub Menu' || $title == 'Super Sub Menu') show @endif"
                             id="settings">
                             <li class="nav-item"><a class="nav-link @if ($title == 'Role Access') active @endif"
-                                    href="/role" data-bs-toggle="" aria-expanded="false">
+                                    href="{{ url('/role') }}" data-bs-toggle="" aria-expanded="false">
                                     <div class="d-flex align-items-center">
                                         <span class="nav-link-text">Role Access</span>
                                     </div>
                                 </a>
                             </li>
                             <li class="nav-item"><a class="nav-link @if ($title == 'Menu') active @endif"
-                                    href="/menu" data-bs-toggle="" aria-expanded="false">
+                                    href="{{ url('/menu') }}" data-bs-toggle="" aria-expanded="false">
                                     <div class="d-flex align-items-center">
                                         <span class="nav-link-text">Menu</span>
                                     </div>
                                 </a>
                             </li>
                             <li class="nav-item"><a class="nav-link @if ($title == 'Sub Menu') active @endif"
-                                    href="/subMenu" data-bs-toggle="" aria-expanded="false">
+                                    href="{{ url('/subMenu') }}" data-bs-toggle="" aria-expanded="false">
                                     <div class="d-flex align-items-center">
                                         <span class="nav-link-text">Sub Menu</span>
                                     </div>
                                 </a>
                             </li>
                             <li class="nav-item"><a class="nav-link @if ($title == 'Super Sub Menu') active @endif"
-                                    href="/superSubMenu" data-bs-toggle="" aria-expanded="false">
+                                    href="{{ url('/superSubMenu') }}" data-bs-toggle="" aria-expanded="false">
                                     <div class="d-flex align-items-center">
                                         <span class="nav-link-text">Super Sub Menu</span>
                                     </div>
@@ -69,6 +69,7 @@
                             </li>
                         </ul>
                     </li>
+                    {{-- setiings --}}
 
                     {{-- API --}}
                     <li class="nav-item">
@@ -77,36 +78,35 @@
                             <div class="d-flex align-items-center">
                                 <div class="dropdown-indicator-icon d-flex flex-center"><span
                                         class="fas fa-caret-right fs-0"></span></div><span class="nav-link-icon"><span
-                                        data-feather="api"></span></span><span class="nav-link-text">Setting
-                                    API</span>
+                                        data-feather="server"></span></span><span class="nav-link-text">API</span>
                             </div>
                         </a>
                         <ul class="nav collapse parent 
-                        @if ($title == 'Role Access' || $title == 'Menu' || $title == 'Sub Menu') show @endif"
+                        @if ($title == 'Role Access' || $title == 'Menu' || $title == 'Sub Menu' || $title == 'Super Sub Menu') show @endif"
                             id="api">
                             <li class="nav-item"><a class="nav-link @if ($title == 'Role Access') active @endif"
-                                    href="/role" data-bs-toggle="" aria-expanded="false">
+                                    href="{{ url('/role') }}" data-bs-toggle="" aria-expanded="false">
                                     <div class="d-flex align-items-center">
                                         <span class="nav-link-text">Role Access</span>
                                     </div>
                                 </a>
                             </li>
                             <li class="nav-item"><a class="nav-link @if ($title == 'Menu') active @endif"
-                                    href="/menu" data-bs-toggle="" aria-expanded="false">
+                                    href="{{ url('/menu') }}" data-bs-toggle="" aria-expanded="false">
                                     <div class="d-flex align-items-center">
                                         <span class="nav-link-text">Menu</span>
                                     </div>
                                 </a>
                             </li>
                             <li class="nav-item"><a class="nav-link @if ($title == 'Sub Menu') active @endif"
-                                    href="/subMenu" data-bs-toggle="" aria-expanded="false">
+                                    href="{{ url('/subMenu') }}" data-bs-toggle="" aria-expanded="false">
                                     <div class="d-flex align-items-center">
                                         <span class="nav-link-text">Sub Menu</span>
                                     </div>
                                 </a>
                             </li>
                             <li class="nav-item"><a class="nav-link @if ($title == 'Super Sub Menu') active @endif"
-                                    href="/superSubMenu" data-bs-toggle="" aria-expanded="false">
+                                    href="{{ url('/superSubMenu') }}" data-bs-toggle="" aria-expanded="false">
                                     <div class="d-flex align-items-center">
                                         <span class="nav-link-text">Super Sub Menu</span>
                                     </div>
@@ -114,9 +114,7 @@
                             </li>
                         </ul>
                     </li>
-
-
-                    {{-- setiings --}}
+                    {{-- API --}}
                 @endif
 
 

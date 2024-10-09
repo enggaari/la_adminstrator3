@@ -55,9 +55,9 @@ Route::middleware(['auth'])->group(function () {
     // developer
     Route::middleware('userAkses:developer')->group(function () {
         Route::get('/dashboardDev', [DeveloperController::class, 'index'])->name('dashboardDev');
-        Route::get('/role', [DeveloperController::class, 'role']);
 
         // role
+        Route::get('/role', [DeveloperController::class, 'role']);
         Route::post('/storeRole', [RoleController::class, 'store']);
         Route::delete('/deleteRole/{id}', [RoleController::class, 'destroy']);
         Route::get('/role/edit/{id}', [RoleController::class, 'edit']);
@@ -83,6 +83,9 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/SuperSubMenu/edit/{id}', [SuperSubMenuController::class, 'edit']);
         Route::put('/SuperSubMenu/update/{id}', [SuperSubMenuController::class, 'update']);
         Route::delete('/deleteSuperSubMenu/{id}', [SuperSubMenuController::class, 'destroy']);
+
+        // user_access_menus
+        Route::get('/userAccessMenu/{id}', [DeveloperController::class, 'useraccessmenu']);
     });
 
     // Route::get('/admin/developer', [DeveloperController::class, 'developer'])->middleware('userAkses:administrator');

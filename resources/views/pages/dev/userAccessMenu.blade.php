@@ -85,8 +85,7 @@
                                         {{-- action --}}
                                         <td class="align-middle white-space-nowrap text-end pe-0">
                                             <div class="font-sans-serif btn-reveal-trigger">
-                                                <a href="/userAccessMenu/{{ Crypt::encryptString($r->id) }}"
-                                                    class="btn btn-sm btn-phoenix-warning me-1 fs--2">
+                                                <a href="/userAccessMenu" class="btn btn-sm btn-phoenix-warning me-1 fs--2">
                                                     <span class="fas fa-key"></span>
                                                 </a>
                                                 <button data-id="{{ Crypt::encryptString($r->id) }}"
@@ -94,8 +93,8 @@
                                                     <span class="fas fa-edit"></span>
                                                 </button>
                                                 <form id="delete-role-form-{{ $r['id'] }}"
-                                                    action="/deleteRole/{{ Crypt::encryptString($r['id']) }}"
-                                                    method="POST" style="display:inline;">
+                                                    action="/deleteRole/{{ Crypt::encryptString($r['id']) }}" method="POST"
+                                                    style="display:inline;">
                                                     @csrf
                                                     @method('DELETE')
                                                     <button type="button" class="btn btn-sm btn-phoenix-danger fs--2"
