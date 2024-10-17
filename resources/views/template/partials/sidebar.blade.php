@@ -82,26 +82,26 @@
                             </div>
                         </a>
                         <ul class="nav collapse parent 
-                        @if ($title == 'Role Access' || $title == 'Menu' || $title == 'Sub Menu' || $title == 'Super Sub Menu') show @endif"
+                        @if ($title == 'App' || $title == 'Documentation' || $title == 'Token Management' || $title == 'Super Sub Menu') show @endif"
                             id="api">
-                            <li class="nav-item"><a class="nav-link @if ($title == 'Role Access') active @endif"
+                            <li class="nav-item"><a class="nav-link @if ($title == 'App') active @endif"
                                     href="{{ url('/role') }}" data-bs-toggle="" aria-expanded="false">
                                     <div class="d-flex align-items-center">
-                                        <span class="nav-link-text">Role Access</span>
+                                        <span class="nav-link-text">App</span>
                                     </div>
                                 </a>
                             </li>
-                            <li class="nav-item"><a class="nav-link @if ($title == 'Menu') active @endif"
+                            <li class="nav-item"><a class="nav-link @if ($title == 'Documentation') active @endif"
                                     href="{{ url('/menu') }}" data-bs-toggle="" aria-expanded="false">
                                     <div class="d-flex align-items-center">
-                                        <span class="nav-link-text">Menu</span>
+                                        <span class="nav-link-text">Documentation</span>
                                     </div>
                                 </a>
                             </li>
-                            <li class="nav-item"><a class="nav-link @if ($title == 'Sub Menu') active @endif"
+                            <li class="nav-item"><a class="nav-link @if ($title == 'Token Management') active @endif"
                                     href="{{ url('/subMenu') }}" data-bs-toggle="" aria-expanded="false">
                                     <div class="d-flex align-items-center">
-                                        <span class="nav-link-text">Sub Menu</span>
+                                        <span class="nav-link-text">Token Management</span>
                                     </div>
                                 </a>
                             </li>

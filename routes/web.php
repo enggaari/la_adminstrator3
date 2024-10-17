@@ -86,6 +86,7 @@ Route::middleware(['auth'])->group(function () {
 
         // user_access_menus
         Route::get('/userAccessMenu/{id}', [DeveloperController::class, 'useraccessmenu']);
+        Route::post('/updateAccessMenu', [DeveloperController::class, 'updateaccessmenu']);
     });
 
     // Route::get('/admin/developer', [DeveloperController::class, 'developer'])->middleware('userAkses:administrator');

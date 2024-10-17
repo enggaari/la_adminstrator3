@@ -8,7 +8,7 @@
                 <div class="col-12 col-xxl-6">
                     <div class="mb-2">
                         <h2 class="mb-2">{{ ucfirst(trans($title)) }}</h2>
-                        <h5 class="text-700 fw-semi-bold">{{ ucfirst(trans(Auth::user()->role)) }}
+                        <h5 class="text-700 fw-semi-bold"> User Acces Menu
                         </h5>
                     </div>
                 </div>
@@ -24,7 +24,7 @@
                     <div class="row align-items-end justify-content-between pb-5 g-3">
                         <div class="col-auto">
                             <h3>Setting </h3>
-                            <p class="text-700 lh-sm mb-0">Role and Role Access</p>
+                            <p class="text-700 lh-sm mb-0">User Acces Menu for {{ $role->role }}</p>
                         </div>
                         <div class="col-12 col-md-auto">
                             <div class="row g-2">
@@ -38,10 +38,6 @@
                                     </div>
                                 </div>
                                 <div class="col-auto">
-                                    <button class="btn btn-sm btn-outline-primary me-1 mb-1" data-bs-toggle="modal"
-                                        data-bs-target="#addRole" type="button">Tambah
-                                        {{ ucfirst(trans($title)) }}
-                                    </button>
                                     {{-- <button class="btn btn-sm btn-phoenix-secondary ms-2 bg-white hover-bg-100"
                                         type="button"><span class="fas fa-ellipsis-h fs--2"></span>
                                     </button> --}}
@@ -54,54 +50,38 @@
                         <table class="table fs--2 mb-0 overflow-hidden">
                             <thead>
                                 <tr>
-                                    <th class="sort border-top white-space-nowrap align-middle" scope="col">NO</th>
                                     <th class="sort border-top white-space-nowrap align-middle" scope="col"
-                                        style="min-width:360px;" data-sort="product">
-                                        ROLE</th>
+                                        data-sort="product">NO</th>
                                     <th class="sort border-top align-middle" scope="col" data-sort="customer"
-                                        style="min-width:200px;">INFORMASI</th>
+                                        style="min-width:200px;">MENU</th>
                                     <th class="sort border-top text-end pe-0 align-middle" scope="col">
-                                        ACTION</th>
+                                        SUB MENU</th>
                                 </tr>
                             </thead>
                             <tbody class="list" id="table-latest-review-body">
-                                @forelse  ($role as $r)
+                                @forelse  ($menu as $m)
                                     <tr class="hover-actions-trigger btn-reveal-trigger position-static"
-                                        id="index_{{ $r['id'] }}">
+                                        id="index_{{ $m['id'] }}">
                                         <td class="align-middle product white-space-nowrap py-0">{{ $loop->iteration }}
                                         </td>
-                                        <td class="align-middle product white-space-nowrap" style="min-width:360px;">
-                                            <h6 class="fw-semi-bold mb-0">{{ $r['role'] }}</h6>
-                                        </td>
-                                        <td class="align-middle customer white-space-nowrap" style="min-width:200px;">
-                                            <div class="d-flex align-items-center">
-                                                {{-- <div class="avatar avatar-l">
-                                                    <div class="avatar-name rounded-circle"><span>R</span></div>
-                                                </div> --}}
-                                                <h6 class="mb-0 text-900">{{ $r['info'] }}</h6>
+                                        <td class="align-middle customer white-space-nowrap" style="min-width:360px;">
+                                            <div class="form-check">
+                                                <input data-id="{{ Crypt::encryptString($m->id) }}" class="form-check-input"
+                                                    id="CheckAction" type="checkbox" value="" {{-- Jika menu ID ada di dalam array accessMenus, tambahkan checked --}}
+                                                    @if (in_array($m->id, $accessMenus)) checked @endif>
+                                                <label class="form-check-label"
+                                                    for="flexCheckDefault">{{ $m['menu'] }}</label>
                                             </div>
+                                            {{-- <h6 class="fw-semi-bold mb-0">{{ $m['menu'] }}</h6> --}}
                                         </td>
 
                                         {{-- action --}}
                                         <td class="align-middle white-space-nowrap text-end pe-0">
                                             <div class="font-sans-serif btn-reveal-trigger">
-                                                <a href="/userAccessMenu" class="btn btn-sm btn-phoenix-warning me-1 fs--2">
-                                                    <span class="fas fa-key"></span>
+                                                <a href=""
+                                                    class="btn btn-sm btn-phoenix-primary me-1 fs--2 edit-data-btn">
+                                                    <span class="fas fa-tasks"></span>
                                                 </a>
-                                                <button data-id="{{ Crypt::encryptString($r->id) }}"
-                                                    class="btn btn-sm btn-phoenix-primary me-1 fs--2 edit-role-btn">
-                                                    <span class="fas fa-edit"></span>
-                                                </button>
-                                                <form id="delete-role-form-{{ $r['id'] }}"
-                                                    action="/deleteRole/{{ Crypt::encryptString($r['id']) }}" method="POST"
-                                                    style="display:inline;">
-                                                    @csrf
-                                                    @method('DELETE')
-                                                    <button type="button" class="btn btn-sm btn-phoenix-danger fs--2"
-                                                        onclick="confirmDelete({{ $r['id'] }})">
-                                                        <span class="fas fa-trash"></span>
-                                                    </button>
-                                                </form>
                                             </div>
                                         </td>
                                         {{-- action --}}
@@ -138,93 +118,8 @@
         </div>
         {{-- content --}}
 
-        {{-- models --}}
-        <div class="modal fade" id="addRole" tabindex="-1" aria-labelledby="addRoleLabel" aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="addRoleLabel">Add Role</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <form method="POST" action="{{ url('storeRole') }}">
-                        <div class="modal-body">
-                            @csrf
-                            <div class="mb-3">
-                                <label for="recipient-name" class="col-form-label">Role:</label>
-                                <input type="text" class="form-control @error('role') is-invalid @enderror"
-                                    name="role" id="recipient-name" value="{{ old('role') }}">
-                                @error('role')
-                                    <div class="text text-danger mt-2">
-                                        {{ $message }}
-                                    </div>
-                                @enderror
-                            </div>
-                            <div class="mb-3">
-                                <label for="message-text" class="col-form-label">Informasi:</label>
-                                <textarea class="form-control @error('info') is-invalid @enderror" name="info" id="message-text">{{ old('info') }}</textarea>
-                                @error('info')
-                                    <div class="text text-danger mt-2">
-                                        {{ $message }}
-                                    </div>
-                                @enderror
-                            </div>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-outline-primary" data-bs-dismiss="modal">Close</button>
-                            <button type="submit" class="btn btn-primary">Save</button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-        {{-- models --}}
-
-        {{-- models edit --}}
-        <div class="modal fade" id="editRoleModal" tabindex="-1" aria-labelledby="editRoleModalLabel"
-            aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="editRoleModalLabel">Add Role</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <form id="edit-role-form">
-                        <div class="modal-body">
-                            @csrf
-                            @method('PUT') <!-- Method spoofing -->
-                            <input type="hidden" id="role-id">
-                            <div class="mb-3">
-                                <label for="recipient-name" class="col-form-label">Role:</label>
-                                <input type="text" class="form-control @error('roleEdit') is-invalid @enderror"
-                                    name="roleEdit" id="roleEdit" value="{{ old('roleEdit') }}">
-                                @error('roleEdit')
-                                    <div class="text text-danger mt-2">
-                                        {{ $message }}
-                                    </div>
-                                @enderror
-                            </div>
-                            <div class="mb-3">
-                                <label for="message-text" class="col-form-label">Informasi:</label>
-                                <textarea class="form-control @error('infoEdit') is-invalid @enderror" name="infoEdit" id="infoEdit">{{ old('infoEdit') }}</textarea>
-                                @error('infoEdit')
-                                    <div class="text text-danger mt-2">
-                                        {{ $message }}
-                                    </div>
-                                @enderror
-                            </div>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-outline-primary" data-bs-dismiss="modal">Close</button>
-                            <button type="submit" class="btn btn-primary">Save</button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-        {{-- models edit --}}
-
         {{-- footer --}}
-        <script src="assets/sweetalert2/sweetalert2@11.js"></script>
+        <script src="{{ asset('assets/sweetalert2/sweetalert2@11.js') }}"></script>
         @include('template.layouts.footer')
         {{-- footer --}}
 
@@ -233,7 +128,7 @@
             <!-- Script untuk menampilkan modal jika ada error -->
             <script>
                 document.addEventListener('DOMContentLoaded', function() {
-                    var myModal = new bootstrap.Modal(document.getElementById('addRole'));
+                    var myModal = new bootstrap.Modal(document.getElementById('addData'));
                     myModal.show();
                 });
             </script>
@@ -268,93 +163,50 @@
             });
         @endif
 
-        // delete role
-        function confirmDelete(roleId) {
-            Swal.fire({
-                title: 'Yakin hapus data?',
-                text: "Data yang dihapus akan hilang!",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Hapus!'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    // Kirim form delete sesuai role ID
-                    document.getElementById('delete-role-form-' + roleId).submit();
-                }
-            });
-        }
+        $(document).ready(function() {
+            // Ketika checkbox dengan id 'CheckAction' di klik
+            $(document).on('change', '.form-check-input', function() {
+                var menuId = $(this).data('id'); // Dapatkan menu ID
+                var isChecked = $(this).is(':checked'); // Cek apakah checkbox dicentang
+                var roleId = '{{ $role->role }}';
 
-        // function data
-        $(document).on('click', '.edit-role-btn', function() {
-            var roleId = $(this).data('id');
-            // Request ke server untuk mengambil data role berdasarkan ID
-            $.ajax({
-                url: '/role/edit/' + roleId,
-                type: 'GET',
-                success: function(response) {
-                    if (response.success) {
-                        $('#role-id').val(response.data.id);
-                        $('#roleEdit').val(response.data.role);
-                        $('#infoEdit').val(response.data.info);
-                        $('#editRoleModal').modal('show');
+                // console.log(roleId);
+                // console.log(menuId);
+                console.log(isChecked);
+
+                $.ajax({
+                    url: '{{ url('updateAccessMenu') }}', // Route ke controller
+                    type: 'POST',
+                    data: {
+                        _token: "{{ csrf_token() }}", // CSRF token
+                        menuId: menuId,
+                        roleId: roleId,
+                        isChecked: isChecked
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            // Jika sukses, tampilkan pesan
+                            // alert(response.message);
+
+                            Swal.fire({
+                                position: "center",
+                                icon: "success",
+                                title: response.message,
+                                showConfirmButton: false,
+                                timer: 1200
+                            });
+
+                        } else {
+                            alert('Terjadi kesalahan: ' + response.message);
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        // Jika terjadi kesalahan pada request
+                        console.error('Error: ' + error);
+                        alert('Error: ' + xhr.responseText);
                     }
-                }
+                });
             });
         });
-
-        $('#edit-role-form').submit(function(e) {
-            e.preventDefault();
-            var roleId = $('#role-id').val();
-            var roleEdit = $('#roleEdit').val();
-            var infoEdit = $('#infoEdit').val();
-
-            $.ajax({
-                url: '/role/update/' + roleId, // URL dengan ID role
-                type: 'PUT', // Menggunakan metode PUT
-                data: {
-                    _token: '{{ csrf_token() }}', // Token CSRF wajib di Laravel
-                    roleEdit: roleEdit,
-                    infoEdit: infoEdit,
-                },
-                success: function(response) {
-                    if (response.success) {
-                        // Update baris yang sesuai berdasarkan roleId
-                        // Gunakan HTML row yang dikirimkan dari server
-                        var updatedRow = response.updatedRow;
-
-                        // Update baris yang sesuai di table
-                        $('#index_' + response.roleId).html(updatedRow);
-
-                        $('#editRoleModal').modal('hide'); // Tutup modal
-
-                        Swal.fire({
-                            position: "center",
-                            icon: "success",
-                            title: response.message,
-                            showConfirmButton: false,
-                            timer: 1200
-                        });
-
-                        // Optionally, refresh the page or update the row dynamically
-                    }
-                },
-                error: function(xhr) {
-                    console.log(xhr.responseText); // Log error jika request gagal
-                }
-            });
-        });
-
-        // $(document).ready(function() {
-        //     // Event ketika modal disembunyikan
-        //     $('.modal').on('hidden.bs.modal', function() {
-        //         // Cek jika tidak ada modal yang sedang ditampilkan
-        //         if ($('.modal.show').length === 0) {
-        //             // Hilangkan class 'is-invalid' dari elemen form-control
-        //             $('.form-control').removeClass('is-invalid');
-        //         }
-        //     });
-        // });
     </script>
 @endpush
