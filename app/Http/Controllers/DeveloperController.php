@@ -57,9 +57,6 @@ class DeveloperController extends Controller
             $roleId = $request->roleId; // Decrypt role ID
             $isChecked = filter_var($request->isChecked, FILTER_VALIDATE_BOOLEAN);
 
-            // return response()->json($isChecked);
-            // die();
-
             if ($isChecked) {
                 // Jika checkbox dicentang, tambahkan data ke tabel user_access_menu
                 UserAccessMenu::updateOrCreate(
