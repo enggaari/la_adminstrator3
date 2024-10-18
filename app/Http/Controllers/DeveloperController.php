@@ -4,11 +4,13 @@ namespace App\Http\Controllers;
 
 use App\Models\Menu;
 use App\Models\Role;
+use App\Models\SubMenu;
 use App\Models\UserAccessMenu;
+use App\Models\UserAccessSubmenu;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 //return type redirectResponse
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\View\View;
 
@@ -61,12 +63,59 @@ class DeveloperController extends Controller
                 // Jika checkbox dicentang, tambahkan data ke tabel user_access_menu
                 UserAccessMenu::updateOrCreate(
                     ['roleId' => $roleId, 'menuId' => $menuId],
-                    ['roleId' => $roleId, 'menuId' => $menuId]
                 );
                 return response()->json(['success' => true, 'message' => 'Akses ditambahkan']);
             } else {
                 // Jika checkbox tidak dicentang, hapus data dari tabel user_access_menu
                 UserAccessMenu::where('roleId', $roleId)->where('menuId', $menuId)->delete();
+                return response()->json(['success' => true, 'message' => 'Akses terhapus']);
+            }
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => $e->getMessage()]);
+        }
+    }
+
+    public function useraccesssubmenu(string $roleId, $menuId): View
+    {
+        $data['title'] = 'Role Access';
+
+        // Mendekripsi ID
+        try {
+            $data['role'] = Crypt::decryptString($roleId);
+            $data['menu'] = Menu::find(Crypt::decryptString($menuId));
+            $data['menuId'] = Crypt::decryptString($menuId);
+        } catch (\Exception $e) {
+            return redirect()->back()->with(['error' => 'ID tidak valid!']);
+        }
+
+        // data
+        $data['submenu'] = SubMenu::join('menus', 'menus.id', '=', 'sub_menus.idMenu')
+            ->where('sub_menus.idMenu', $data['menuId'])
+            ->select('sub_menus.id as submenuId', 'sub_menus.*', 'menus.*')
+            ->get();
+
+        $data['accessSubmenus'] = UserAccessSubmenu::where('roleId',  $data['role'])->where('menuId', $data['menuId'])->pluck('menuId')->toArray();
+
+        return view('pages.dev.userAccessSubmenu', $data);
+    }
+
+    function updateaccesssubmenu(Request $request)
+    {
+        try {
+            $submenuId = Crypt::decryptString($request->submenuId);
+            $menuId = $request->menuId;
+            $roleId = $request->roleId;
+            $isChecked = filter_var($request->isChecked, FILTER_VALIDATE_BOOLEAN);
+
+            if ($isChecked) {
+                // Jika checkbox dicentang, tambahkan data ke tabel user_access_menu
+                UserAccessSubmenu::updateOrCreate(
+                    ['roleId' => $roleId, 'menuId' => $menuId, 'submenuId' => $submenuId],
+                );
+                return response()->json(['success' => true, 'message' => 'Akses ditambahkan']);
+            } else {
+                // Jika checkbox tidak dicentang, hapus data dari tabel user_access_menu
+                UserAccessSubmenu::where('roleId', $roleId)->where('menuId', $menuId)->where('submenuId', $submenuId)->delete();
                 return response()->json(['success' => true, 'message' => 'Akses terhapus']);
             }
         } catch (\Exception $e) {

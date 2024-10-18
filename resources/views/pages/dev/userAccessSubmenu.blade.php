@@ -23,8 +23,8 @@
                 <div data-list='{"valueNames":["product","customer","rating","review","time"],"page":6}'>
                     <div class="row align-items-end justify-content-between pb-5 g-3">
                         <div class="col-auto">
-                            <h3>Setting </h3>
-                            <p class="text-700 lh-sm mb-0">User Acces Menu for {{ $role->role }}</p>
+                            <h3>Menu {{ $menu->menu }}</h3>
+                            <p class="text-700 lh-sm mb-0">User Acces Submenu for {{ $role }}</p>
                         </div>
                         <div class="col-12 col-md-auto">
                             <div class="row g-2">
@@ -59,29 +59,27 @@
                                 </tr>
                             </thead>
                             <tbody class="list" id="table-latest-review-body">
-                                @forelse  ($menu as $m)
+                                @forelse  ($submenu as $sm)
                                     <tr class="hover-actions-trigger btn-reveal-trigger position-static"
-                                        id="index_{{ $m['id'] }}">
+                                        id="index_{{ $sm['id'] }}">
                                         <td class="align-middle product white-space-nowrap py-0">{{ $loop->iteration }}
                                         </td>
                                         <td class="align-middle customer white-space-nowrap" style="min-width:360px;">
-                                            <div class="form-check">
-                                                <input data-id="{{ Crypt::encryptString($m->id) }}" class="form-check-input"
-                                                    id="CheckAction" type="checkbox" value="" {{-- Jika menu ID ada di dalam array accessMenus, tambahkan checked --}}
-                                                    @if (in_array($m->id, $accessMenus)) checked @endif>
-                                                <label class="form-check-label"
-                                                    for="flexCheckDefault">{{ $m['menu'] }}</label>
-                                            </div>
-                                            {{-- <h6 class="fw-semi-bold mb-0">{{ $m['menu'] }}</h6> --}}
+
+                                            <label class="form-check-label"
+                                                for="flexCheckDefault">{{ $menu->menu }}</label>
+                                            {{-- <h6 class="fw-semi-bold mb-0">{{ $sm['menu'] }}</h6> --}}
                                         </td>
 
                                         {{-- action --}}
                                         <td class="align-middle white-space-nowrap text-end pe-0">
-                                            <div class="font-sans-serif btn-reveal-trigger">
-                                                <a href="{{ url('userAccessSubMenu/' . Crypt::encryptString($role->role) . '/' . Crypt::encryptString($m->id)) }}"
-                                                    class="btn btn-sm btn-phoenix-primary me-1 fs--2 edit-data-btn">
-                                                    <span class="fas fa-tasks"></span>
-                                                </a>
+                                            <div class="form-check">
+                                                <input data-id="{{ Crypt::encryptString($sm->submenuId) }}"
+                                                    class="form-check-input" id="CheckAction" type="checkbox" value=""
+                                                    @if (in_array($sm->id, $accessSubmenus)) checked @endif>
+                                                <label class="form-check-label"
+                                                    for="flexCheckDefault">{{ $sm['subMenu'] }}</label>
+
                                             </div>
                                         </td>
                                         {{-- action --}}
@@ -166,21 +164,23 @@
         $(document).ready(function() {
             // Ketika checkbox dengan id 'CheckAction' di klik
             $(document).on('change', '.form-check-input', function() {
-                var menuId = $(this).data('id'); // Dapatkan menu ID
+                var submenuId = $(this).data('id'); // Dapatkan menu ID
                 var isChecked = $(this).is(':checked'); // Cek apakah checkbox dicentang
-                var roleId = '{{ $role->role }}';
+                var roleId = '{{ $role }}';
+                var menuId = '{{ $menuId }}';
 
                 // console.log(roleId);
                 // console.log(menuId);
-                console.log(isChecked);
+                console.log(submenuId);
 
                 $.ajax({
-                    url: '{{ url('updateAccessMenu') }}', // Route ke controller
+                    url: '{{ url('updateAccessSubmenu') }}', // Route ke controller
                     type: 'POST',
                     data: {
                         _token: "{{ csrf_token() }}", // CSRF token
                         menuId: menuId,
                         roleId: roleId,
+                        submenuId: submenuId,
                         isChecked: isChecked
                     },
                     success: function(response) {
