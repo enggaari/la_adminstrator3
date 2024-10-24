@@ -82,6 +82,8 @@
                                                     class="btn btn-sm btn-phoenix-primary me-1 fs--2 edit-data-btn">
                                                     <span class="fas fa-tasks"></span>
                                                 </a>
+                                                {{ $role->role }} -
+                                                {{ $m->id }}
                                             </div>
                                         </td>
                                         {{-- action --}}

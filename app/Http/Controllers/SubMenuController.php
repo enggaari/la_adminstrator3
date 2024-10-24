@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Menu;
 use App\Models\SubMenu;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
 
@@ -13,6 +14,9 @@ class SubMenuController extends Controller
     function index()
     {
         $data['title'] = 'Sub Menu';
+        $data['menu'] = Menu::whereHas('userAccessMenus', function ($query) {
+            $query->where('roleId', Auth::user()->role);
+        })->get();
 
         // data
         $subMenu = DB::table('sub_menus')

@@ -7,12 +7,16 @@ use App\Models\SubMenu;
 use App\Models\SuperSubMenu;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\Auth;
 
 class SuperSubMenuController extends Controller
 {
     function index()
     {
         $data['title'] = 'Super Sub Menu';
+        $data['menuSidebar'] = Menu::whereHas('userAccessMenus', function ($query) {
+            $query->where('roleId', Auth::user()->role);
+        })->get();
 
         // data
         $data['superSubMenu'] = (new SuperSubMenu())->superSubMenu();

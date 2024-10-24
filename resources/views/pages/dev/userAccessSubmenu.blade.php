@@ -23,7 +23,7 @@
                 <div data-list='{"valueNames":["product","customer","rating","review","time"],"page":6}'>
                     <div class="row align-items-end justify-content-between pb-5 g-3">
                         <div class="col-auto">
-                            <h3>Menu {{ $menu->menu }}</h3>
+                            <h3>Menu {{ $menuSelected->menu }}</h3>
                             <p class="text-700 lh-sm mb-0">User Acces Submenu for {{ $role }}</p>
                         </div>
                         <div class="col-12 col-md-auto">
@@ -67,7 +67,7 @@
                                         <td class="align-middle customer white-space-nowrap" style="min-width:360px;">
 
                                             <label class="form-check-label"
-                                                for="flexCheckDefault">{{ $menu->menu }}</label>
+                                                for="flexCheckDefault">{{ $menuSelected->menu }}</label>
                                             {{-- <h6 class="fw-semi-bold mb-0">{{ $sm['menu'] }}</h6> --}}
                                         </td>
 
@@ -76,9 +76,9 @@
                                             <div class="form-check">
                                                 <input data-id="{{ Crypt::encryptString($sm->submenuId) }}"
                                                     class="form-check-input" id="CheckAction" type="checkbox" value=""
-                                                    @if (in_array($sm->id, $accessSubmenus)) checked @endif>
-                                                <label class="form-check-label"
-                                                    for="flexCheckDefault">{{ $sm['subMenu'] }}</label>
+                                                    @if (in_array($sm->submenuId, $accessSubmenus)) checked @endif>
+                                                <label class="form-check-label" for="flexCheckDefault">{{ $sm['subMenu'] }}
+                                                    - {{ $sm->submenuId }}</label>
 
                                             </div>
                                         </td>

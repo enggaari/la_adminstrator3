@@ -26,4 +26,10 @@ class Menu extends Model
     {
         return $this->hasManyThrough(SuperSubMenu::class, SubMenu::class, 'idMenu', 'idSubMenu', 'id', 'id');
     }
+
+    // Relasi ke user_access_menus
+    public function userAccessMenus()
+    {
+        return $this->hasMany(UserAccessMenu::class, 'menuId', 'id');
+    }
 }

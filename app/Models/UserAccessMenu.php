@@ -10,4 +10,10 @@ class UserAccessMenu extends Model
     use HasFactory;
 
     protected $fillable = ['roleId', 'menuId'];
+
+    // Relasi ke menu
+    public function menu()
+    {
+        return $this->belongsTo(Menu::class, 'menuId', 'id');
+    }
 }

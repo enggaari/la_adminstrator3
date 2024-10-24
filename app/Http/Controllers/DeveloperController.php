@@ -19,12 +19,19 @@ class DeveloperController extends Controller
     public function index()
     {
         $data['title'] = 'Dashboard';
+        $data['menuSidebar'] = Menu::whereHas('userAccessMenus', function ($query) {
+            $query->where('roleId', Auth::user()->role);
+        })->get();
+
         return view('pages.dev.index', $data);
     }
 
     public function role()
     {
         $data['title'] = 'Role Access';
+        $data['menuSidebar'] = Menu::whereHas('userAccessMenus', function ($query) {
+            $query->where('roleId', Auth::user()->role);
+        })->get();
 
         // data
         $data['role'] = Role::all();
@@ -34,6 +41,9 @@ class DeveloperController extends Controller
     public function useraccessmenu(string $id): View
     {
         $data['title'] = 'Role Access';
+        $data['menuSidebar'] = Menu::whereHas('userAccessMenus', function ($query) {
+            $query->where('roleId', Auth::user()->role);
+        })->get();
 
         // Mendekripsi ID
         try {
@@ -42,7 +52,6 @@ class DeveloperController extends Controller
         } catch (\Exception $e) {
             return redirect()->back()->with(['error' => 'ID tidak valid!']);
         }
-
 
         // data
         $data['menu'] = Menu::all();
@@ -68,6 +77,7 @@ class DeveloperController extends Controller
             } else {
                 // Jika checkbox tidak dicentang, hapus data dari tabel user_access_menu
                 UserAccessMenu::where('roleId', $roleId)->where('menuId', $menuId)->delete();
+                UserAccessSubmenu::where('roleId', $roleId)->where('menuId', $menuId)->delete();
                 return response()->json(['success' => true, 'message' => 'Akses terhapus']);
             }
         } catch (\Exception $e) {
@@ -78,11 +88,15 @@ class DeveloperController extends Controller
     public function useraccesssubmenu(string $roleId, $menuId): View
     {
         $data['title'] = 'Role Access';
+        $data['menuSidebar'] = Menu::whereHas('userAccessMenus', function ($query) {
+            $query->where('roleId', Auth::user()->role);
+        })->get();
+
 
         // Mendekripsi ID
         try {
             $data['role'] = Crypt::decryptString($roleId);
-            $data['menu'] = Menu::find(Crypt::decryptString($menuId));
+            $data['menuSelected'] = Menu::find(Crypt::decryptString($menuId));
             $data['menuId'] = Crypt::decryptString($menuId);
         } catch (\Exception $e) {
             return redirect()->back()->with(['error' => 'ID tidak valid!']);
@@ -93,8 +107,11 @@ class DeveloperController extends Controller
             ->where('sub_menus.idMenu', $data['menuId'])
             ->select('sub_menus.id as submenuId', 'sub_menus.*', 'menus.*')
             ->get();
+        // ->toArray();
 
-        $data['accessSubmenus'] = UserAccessSubmenu::where('roleId',  $data['role'])->where('menuId', $data['menuId'])->pluck('menuId')->toArray();
+        $data['accessSubmenus'] = UserAccessSubmenu::where('roleId',  $data['role'])->where('menuId', $data['menuId'])->pluck('submenuId')->toArray();
+        // echo json_encode($data['accessSubmenus']);
+        // die();
 
         return view('pages.dev.userAccessSubmenu', $data);
     }

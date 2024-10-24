@@ -72,7 +72,7 @@
                     {{-- setiings --}}
 
                     {{-- API --}}
-                    <li class="nav-item">
+                    {{-- <li class="nav-item">
                         <a class="nav-link dropdown-indicator" href="#api" role="button" data-bs-toggle="collapse"
                             aria-expanded="false" aria-controls="api">
                             <div class="d-flex align-items-center">
@@ -113,82 +113,159 @@
                                 </a>
                             </li>
                         </ul>
-                    </li>
+                    </li> --}}
                     {{-- API --}}
                 @endif
 
+                @foreach ($menuSidebar as $m)
+                    {{-- menu --}}
+                    <li class="nav-item">
+                        <p class="navbar-vertical-label">{{ $m->menu }} - {{ $m->id }}</p>
+                    </li>
 
-                <li class="nav-item">
-                    <p class="navbar-vertical-label">Pages</p>
-                    <a class="nav-link" href="pages/starter.html" role="button" data-bs-toggle=""
-                        aria-expanded="false">
-                        <div class="d-flex align-items-center"><span class="nav-link-icon"><span
-                                    data-feather="flag"></span></span><span class="nav-link-text">Starter</span></div>
-                    </a>
+                    @php
+                        $idMenu = $m->id;
+                        $role = Auth::user()->role;
+                        $subMenus = DB::table('user_access_submenus')
+                            ->join('sub_menus', 'user_access_submenus.submenuId', '=', 'sub_menus.id')
+                            ->where('user_access_submenus.roleId', $role)
+                            ->where('user_access_submenus.menuId', $idMenu)
+                            ->select('user_access_submenus.id as smId', 'user_access_submenus.*', 'sub_menus.*') // Pilih kolom dari kedua tabel
+                            ->get();
+                        // ->toArray();
 
-                    <a class="nav-link dropdown-indicator" href="#errors" role="button" data-bs-toggle="collapse"
-                        aria-expanded="false" aria-controls="errors">
-                        <div class="d-flex align-items-center">
-                            <div class="dropdown-indicator-icon d-flex flex-center"><span
-                                    class="fas fa-caret-right fs-0"></span></div><span class="nav-link-icon"><span
-                                    data-feather="alert-triangle"></span></span><span
-                                class="nav-link-text">Errors</span>
-                        </div>
-                    </a>
-                    <ul class="nav collapse parent" id="errors">
-                        <li class="nav-item"><a class="nav-link" href="pages/errors/404.html" data-bs-toggle=""
+                        // var_dump($subMenus);
+                        // die();
+
+                        $jumlahRow = $subMenus->count();
+                    @endphp
+
+                    @if ($jumlahRow == 1)
+                        @foreach ($subMenus as $sm)
+                            @php
+                                $querysupersubmenu = DB::table('super_sub_menus')
+                                    ->join('sub_menus', 'super_sub_menus.idSubMenu', '=', 'sub_menus.id')
+                                    ->where('super_sub_menus.idSubMenu', $sm->smId)
+                                    ->where('super_sub_menus.status', 1)
+                                    ->select('super_sub_menus.*', 'sub_menus.*')
+                                    ->get();
+
+                                // var_dump($querysupersubmenu);
+
+                                $jumlahRowSupersubmenu = $querysupersubmenu->count();
+                            @endphp
+                            <a class="nav-link" href="{{ url("$sm->url") }}" role="button" data-bs-toggle=""
                                 aria-expanded="false">
-                                <div class="d-flex align-items-center"><span class="nav-link-text">404</span></div>
-                            </a></li>
-                        <li class="nav-item"><a class="nav-link" href="pages/errors/500.html" data-bs-toggle=""
-                                aria-expanded="false">
-                                <div class="d-flex align-items-center"><span class="nav-link-text">500</span></div>
-                            </a></li>
-                    </ul>
-                    <a class="nav-link dropdown-indicator" href="#authentication" role="button"
-                        data-bs-toggle="collapse" aria-expanded="false" aria-controls="authentication">
-                        <div class="d-flex align-items-center">
-                            <div class="dropdown-indicator-icon d-flex flex-center"><span
-                                    class="fas fa-caret-right fs-0"></span></div><span class="nav-link-icon"><span
-                                    data-feather="lock"></span></span><span
-                                class="nav-link-text">Authentication</span>
-                        </div>
-                    </a>
-                    <ul class="nav collapse parent" id="authentication">
-                        <li class="nav-item"><a class="nav-link" href="pages/authentication/simple/sign-in.html"
-                                data-bs-toggle="" aria-expanded="false">
-                                <div class="d-flex align-items-center"><span class="nav-link-text">Sign
-                                        in</span></div>
-                            </a></li>
-                        <li class="nav-item"><a class="nav-link" href="pages/authentication/simple/sign-up.html"
-                                data-bs-toggle="" aria-expanded="false">
-                                <div class="d-flex align-items-center"><span class="nav-link-text">Sign
-                                        up</span></div>
-                            </a></li>
-                        <li class="nav-item"><a class="nav-link" href="pages/authentication/simple/sign-out.html"
-                                data-bs-toggle="" aria-expanded="false">
-                                <div class="d-flex align-items-center"><span class="nav-link-text">Sign
-                                        out</span></div>
-                            </a></li>
-                        <li class="nav-item"><a class="nav-link"
-                                href="pages/authentication/simple/forgot-password.html" data-bs-toggle=""
-                                aria-expanded="false">
-                                <div class="d-flex align-items-center"><span class="nav-link-text">Forgot
-                                        password</span></div>
-                            </a></li>
-                        <li class="nav-item"><a class="nav-link"
-                                href="pages/authentication/simple/reset-password.html" data-bs-toggle=""
-                                aria-expanded="false">
-                                <div class="d-flex align-items-center"><span class="nav-link-text">Reset
-                                        password</span></div>
-                            </a></li>
-                        <li class="nav-item"><a class="nav-link" href="pages/authentication/simple/lock-screen.html"
-                                data-bs-toggle="" aria-expanded="false">
-                                <div class="d-flex align-items-center"><span class="nav-link-text">Lock
-                                        screen</span></div>
-                            </a></li>
-                    </ul>
-                </li>
+                                <div class="d-flex align-items-center">
+                                    <span class="nav-link-icon">
+                                        <span data-feather="{{ $sm->icon }}"></span>
+                                    </span>
+                                    <span class="nav-link-text">{{ $sm->subMenu }} -
+                                        {{ $sm->id }}</span>
+                                </div>
+                            </a>
+                        @endforeach
+                    @elseif ($jumlahRow > 1)
+                        @foreach ($subMenus as $sm)
+                            @php
+                                $submenuId = $sm->id;
+                                $querysupersubmenu = DB::table('super_sub_menus')
+                                    ->join('sub_menus', 'sub_menus.id', '=', 'super_sub_menus.id')
+                                    ->where('super_sub_menus.idSubMenu', $submenuId)
+                                    ->where('super_sub_menus.idMenu', $idMenu)
+                                    ->where('super_sub_menus.status', 1)
+                                    ->select(
+                                        'super_sub_menus.*',
+                                        'sub_menus.*',
+                                        'super_sub_menus.url as urlSuperSubmenus',
+                                    )
+                                    ->get();
+
+                            @endphp
+
+                            @php
+                                $submenuId = $sm->id;
+                                $cekRowSupers = DB::table('super_sub_menus')
+                                    ->join('sub_menus', 'sub_menus.id', '=', 'super_sub_menus.id')
+                                    ->where('super_sub_menus.idSubMenu', $submenuId)
+                                    ->where('super_sub_menus.idMenu', $idMenu)
+                                    ->where('super_sub_menus.status', 1)
+                                    ->select(
+                                        'super_sub_menus.*',
+                                        'sub_menus.*',
+                                        'super_sub_menus.url as urlSuperSubmenus',
+                                    )
+                                    ->get();
+
+                                $rowSupers = $cekRowSupers->count();
+                            @endphp
+
+                            {{-- submenu --}}
+                            @if ($rowSupers > 0)
+                                {{-- memiliki submenu --}}
+                                <a class="nav-link dropdown-indicator" href="#sub{{ $sm->submenuId }}" role="button"
+                                    data-bs-toggle="collapse" aria-expanded="false"
+                                    aria-controls="sub{{ $sm->submenuId }}">
+                                    <div class="d-flex align-items-center">
+                                        <div class="dropdown-indicator-icon d-flex flex-center">
+                                            <span class="fas fa-caret-right fs-0"></span>
+                                        </div>
+                                        <span class="nav-link-icon">
+                                            <span data-feather="{{ $sm->icon }}"></span>
+                                        </span>
+                                        <span class="nav-link-text">{{ $sm->subMenu }} - {{ $sm->submenuId }}
+                                        </span>
+                                    </div>
+                                </a>
+
+                                @php
+                                    $submenuId = $sm->id;
+                                    $querysuperSubmenu = DB::table('super_sub_menus')
+                                        ->join('sub_menus', 'sub_menus.id', '=', 'super_sub_menus.id')
+                                        ->where('super_sub_menus.idSubMenu', $submenuId)
+                                        ->where('super_sub_menus.idMenu', $idMenu)
+                                        ->where('super_sub_menus.status', 1)
+                                        ->select(
+                                            'super_sub_menus.*',
+                                            'sub_menus.*',
+                                            'super_sub_menus.url as urlSuperSubmenus',
+                                        )
+                                        ->get();
+                                @endphp
+
+                                <ul class="nav collapse parent" id="sub{{ $sm->submenuId }}">
+                                    @foreach ($querysuperSubmenu as $key => $spsm)
+                                        {{-- @if ($querysuperSubmenu) --}}
+                                        <li class="nav-item">
+                                            <a class="nav-link" href="{{ url(" $spsm->urlSuperSubmenus ") }}"
+                                                data-bs-toggle="" aria-expanded="false">
+                                                <div class="d-flex align-items-center"><span
+                                                        class="nav-link-text">{{ $spsm->super_sub_menus }}</span>
+                                                </div>
+                                            </a>
+                                        </li>
+                                        {{-- @endif --}}
+                                    @endforeach
+                                </ul>
+                            @elseif ($rowSupers == 0)
+                                <a class="nav-link" href="{{ url("$sm->url") }}" role="button" data-bs-toggle=""
+                                    aria-expanded="false">
+                                    <div class="d-flex align-items-center">
+                                        <span class="nav-link-icon">
+                                            <span data-feather="{{ $sm->icon }}"></span>
+                                        </span>
+                                        <span class="nav-link-text">{{ $sm->subMenu }} -
+                                            {{ $sm->id }}</span>
+                                    </div>
+                                </a>
+                            @endif
+                        @endforeach
+                    @else
+                        <li class="nav-item">
+                            <small class="navbar-vertical-label"> Menu Tidak ditemukan</small>
+                        </li>
+                    @endif
+                @endforeach
 
             </ul>
         </div>
